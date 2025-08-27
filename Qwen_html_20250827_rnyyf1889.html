@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker | Admin Panel</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --dark: #1e293b;
+      --darker: #0f172a;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --gray-dark: #475569;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(255, 255, 255, 0.12);
+      --border: rgba(255, 255, 255, 0.2);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dark-mode {
+      --primary: #818cf8;
+      --primary-dark: #6366f1;
+      --secondary: #a78bfa;
+      --accent: #06b6d4;
+      --success: #34d399;
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --dark: #f8fafc;
+      --darker: #ffffff;
+      --light: #1e293b;
+      --gray: #94a3b8;
+      --gray-dark: #cbd5e1;
+      --card-bg: rgba(30, 41, 59, 0.8);
+      --card-hover: rgba(30, 41, 59, 0.9);
+      --border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: var(--transition);
+    }
+
+    header {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--primary);
+    }
+
+    .user-greeting {
+      font-size: 1rem;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: rgba(99, 102, 241, 0.1);
+      transform: scale(1.1);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dashboard-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dashboard-title i {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .dashboard-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .btn-icon {
+      padding: 0.6rem;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--light);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-icon:hover {
+      background: var(--card-hover);
+      transform: translateY(-2px);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary);
+    }
+
+    .summary-card.income::before {
+      background: var(--success);
+    }
+
+    .summary-card.expenses::before {
+      background: var(--danger);
+    }
+
+    .summary-card.balance::before {
+      background: var(--accent);
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card h3 {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .summary-card .value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--light);
+    }
+
+    .summary-card .trend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .trend.up {
+      color: var(--success);
+    }
+
+    .trend.down {
+      color: var(--danger);
+    }
+
+    .section {
+      margin-top: 2rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    input, select, button {
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transition);
+    }
+
+    input, select {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--light);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(5px);
+    }
+
+    input::placeholder, select {
+      color: var(--gray);
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: -1px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .delete-btn {
+      background: var(--danger) !important;
+      padding: 0.4rem 0.8rem !important;
+      width: auto !important;
+    }
+
+    .delete-btn:hover {
+      background: #dc2626 !important;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--gray);
+      font-weight: 500;
+      border-top: 1px solid var(--border);
+    }
+
+    tr:not(:last-child) td {
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:hover {
+      background: var(--card-hover);
+    }
+
+    .category-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .category-food { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .category-travel { background: rgba(6, 182, 212, 0.1); color: var(--accent); }
+    .category-bills { background: rgba(234, 179, 8, 0.1); color: var(--warning); }
+    .category-shopping { background: rgba(139, 92, 246, 0.1); color: var(--secondary); }
+    .category-entertainment { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    .category-healthcare { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .category-education { background: rgba(79, 70, 229, 0.1); color: var(--primary-dark); }
+    .category-housing { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+    .category-insurance { background: rgba(217, 119, 6, 0.1); color: #d97706; }
+    .category-personal { background: rgba(124, 58, 237, 0.1); color: #7c3aed; }
+    .category-gifts { background: rgba(219, 39, 119, 0.1); color: #db2777; }
+    .category-savings { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .category-other { background: rgba(100, 116, 139, 0.1); color: var(--gray); }
+
+    .custom-category {
+      margin-bottom: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .login-container {
+      max-width: 400px;
+      margin: 6rem auto;
+      padding: 3rem 2rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .login-container h2 {
+      margin-bottom: 1.5rem;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .google-btn {
+      background: #4285F4 !important;
+      margin-top: 1rem;
+    }
+
+    .google-btn:hover {
+      background: #3367d6 !important;
+    }
+
+    .switch-mode {
+      margin-top: 1rem;
+      color: var(--gray);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .switch-mode:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      main, .login-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .dashboard-actions {
+        justify-content: center;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Page -->
+  <div id="loginSection" class="login-container">
+    <h2><span style="font-size: 1.5rem;">🔐</span> Admin Login</h2>
+    <p style="margin-bottom: 1rem; color: var(--gray);">Firebase authentication is currently unavailable in this environment.</p>
+    <input type="email" id="email" placeholder="Email" value="demo@example.com" />
+    <input type="password" id="password" placeholder="Password" value="password123" />
+    <button onclick="login()" class="btn btn-primary" style="width: 100%;">Login</button>
+    <button onclick="register()" class="btn btn-outline" style="width: 100; margin-top: 0.5rem;">Register</button>
+    <button class="google-btn btn" style="width: 100%; margin-top: 0.5rem;" onclick="googleLogin()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Sign in with Google
+    </button>
+    <div class="switch-mode">
+      <a href="#" style="color:inherit;">Forgot password?</a>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <header>
+    <h1>Expense Tracker</h1>
+    <div class="user-greeting">
+      <span id="userName">User</span>
+      <button class="theme-toggle" id="themeToggle">🌙</button>
+    </div>
+  </header>
+
+  <main id="appSection" class="hidden">
+    <div class="dashboard-header">
+      <div class="dashboard-title">
+        <i>📊</i>
+        <h2>Dashboard</h2>
+      </div>
+      <div class="dashboard-actions">
+        <button class="btn btn-outline" onclick="document.getElementById('settingsSection').scrollIntoView({behavior: 'smooth'})">
+          <i>⚙️</i> Settings
+        </button>
+        <button class="btn btn-primary" onclick="document.getElementById('addExpenseSection').scrollIntoView({behavior: 'smooth'})">
+          <i>➕</i> Add Expense
+        </button>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-card income" id="incomeCard">
+        <h3>Total Income</h3>
+        <div class="value" id="totalIncome">$0.00</div>
+        <div class="trend up">
+          <i>📈</i>
+          <span>+12% from last month</span>
+        </div>
+      </div>
+      <div class="summary-card expenses" id="expensesCard">
+        <h3>Total Expenses</h3>
+        <div class="value" id="totalExpenses">$0.00</div>
+        <div class="trend down">
+          <i>📉</i>
+          <span>-5% from last month</span>
+        </div>
+      </div>
+      <div class="summary-card balance" id="balanceCard">
+        <h3>Balance</h3>
+        <div class="value" id="balance">$0.00</div>
+        <div class="trend up">
+          <i>💰</i>
+          <span>Healthy balance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="section" id="settingsSection">
+      <div class="section-header">
+        <div class="section-title">
+          <i>⚙️</i>
+          <h3>Settings & Preferences</h3>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="incomeInput">Set Total Income:</label>
+          <input type="number" id="incomeInput" placeholder="Enter your total income" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label for="currencySelect">Choose Currency:</label>
+          <select id="currencySelect">
+            <option value="$">USD ($)</option>
+            <option value="€">EUR (€)</option>
+            <option value="£">GBP (£)</option>
+            <option value="₹">INR (₹)</option>
+            <option value="¥">JPY (¥)</option>
+            <option value="₿">BTC (₿)</option>
+            <option value="¥">CNY (¥)</option>
+            <option value="₽">RUB (₽)</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="setIncome()" class="btn btn-primary">Update Income</button>
+    </div>
+
+    <!-- Add Expense Section -->
+    <div class="section" id="addExpenseSection">
+      <div class="section-header">
+        <div class="section-title">
+          <i>➕</i>
+          <h3>Add New Expense</h3>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <input type="text" id="expTitle" placeholder="Expense Title" />
+        </div>
+        <div class="form-group">
+          <input type="number" id="expAmount" placeholder="Amount" step="0.01" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <select id="expCategory" onchange="onCategoryChange()">
+            <option value="Food">🍜 Food & Dining</option>
+            <option value="Travel">✈️ Travel & Transportation</option>
+            <option value="Bills">💡 Utilities & Bills</option>
+            <option value="Shopping">🛍️ Shopping & Retail</option>
+            <option value="Entertainment">🎮 Entertainment & Leisure</option>
+            <option value="Healthcare">🏥 Healthcare & Medical</option>
+            <option value="Education">📚 Education & Learning</option>
+            <option value="Housing">🏠 Housing & Rent</option>
+            <option value="Insurance">🛡️ Insurance</option>
+            <option value="Personal">🧘 Personal Care</option>
+            <option value="Gifts">🎁 Gifts & Donations</option>
+            <option value="Savings">💰 Savings & Investments</option>
+            <option value="Other">➕ Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" id="expCustomCategory" class="custom-category hidden" placeholder="Enter custom category" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <input type="date" id="expDate" />
+        </div>
+      </div>
+      <button onclick="addExpense()" class="btn btn-primary">Add Expense</button>
+    </div>
+
+    <!-- Expense List Section -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          <i>📋</i>
+          <h3>Recent Expenses</h3>
+        </div>
+        <button class="btn btn-outline" onclick="exportExpenses()">
+          <i>📤</i> Export
+        </button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="expTable"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <button id="logoutBtn" style="display:none; position:fixed; top:1rem; right:1rem; background:var(--danger); border: none; padding: 0.75rem 1.25rem; border-radius: 8px; color: white; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: var(--transition);">
+    <i>🚪</i> Logout
+  </button>
+
+  <footer>
+    © 2025 Expense Tracker | Advanced Financial Management System
+  </footer>
+
+  <script>
+    // Mock data for demonstration purposes with more expense items
+    let expenses = [
+      { id: '1', title: 'Grocery Shopping at Supermarket', amount: 89.99, category: 'Food', date: '2025-01-15' },
+      { id: '2', title: 'Netflix Premium Subscription', amount: 15.99, category: 'Entertainment', date: '2025-01-14' },
+      { id: '3', title: 'Gas Refill for Car', amount: 45.50, category: 'Travel', date: '2025-01-13' },
+      { id: '4', title: 'New Wireless Headphones', amount: 129.99, category: 'Shopping', date: '2025-01-12' },
+      { id: '5', title: 'Doctor Consultation Fee', amount: 75.00, category: 'Healthcare', date: '2025-01-11' },
+      { id: '6', title: 'Advanced Web Development Course', amount: 99.99, category: 'Education', date: '2025-01-10' },
+      { id: '7', title: 'Monthly Rent Payment', amount: 1200.00, category: 'Housing', date: '2025-01-09' },
+      { id: '8', title: 'Car Insurance Premium', amount: 85.00, category: 'Insurance', date: '2025-01-08' },
+      { id: '9', title: 'Gym Membership', amount: 39.99, category: 'Personal', date: '2025-01-07' },
+      { id: '10', title: 'Charity Donation', amount: 50.00, category: 'Gifts', date: '2025-01-06' },
+      { id: '11', title: 'Electricity Bill', amount: 67.80, category: 'Bills', date: '2025-01-05' },
+      { id: '12', title: 'Water & Sewer Bill', amount: 32.45, category: 'Bills', date: '2025-01-04' },
+      { id: '13', title: 'Internet Service', amount: 49.99, category: 'Bills', date: '2025-01-03' },
+      { id: '14', title: 'New Running Shoes', amount: 89.95, category: 'Shopping', date: '2025-01-02' },
+      { id: '15', title: 'Dental Checkup', amount: 120.00, category: 'Healthcare', date: '2025-01-01' },
+      { id: '16', title: 'Weekly Groceries', amount: 112.30, category: 'Food', date: '2025-01-16' },
+      { id: '17', title: 'Public Transportation Pass', amount: 75.00, category: 'Travel', date: '2025-01-17' },
+      { id: '18', title: 'New Books for Study', amount: 68.99, category: 'Education', date: '2025-01-18' },
+      { id: '19', title: 'Haircut and Styling', amount: 45.00, category: 'Personal', date: '2025-01-19' },
+      { id: '20', title: 'Birthday Gift for Friend', amount: 75.00, category: 'Gifts', date: '2025-01-20' }
+    ];
+    
+    let currentUser = null;
+    let isLoggedIn = false;
+    let totalIncome = 5000;
+    let currencySymbol = '$';
+    let isDarkMode = false;
+
+    // DOM Elements
+    const loginSection = document.getElementById('loginSection');
+    const appSection = document.getElementById('appSection');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const expTable = document.getElementById('expTable');
+    const totalExpenses = document.getElementById('totalExpenses');
+    const totalIncomeElement = document.getElementById('totalIncome');
+    const balance = document.getElementById('balance');
+    const userName = document.getElementById('userName');
+    const incomeInput = document.getElementById('incomeInput');
+    const currencySelect = document.getElementById('currencySelect');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Initialize income input
+    incomeInput.value = totalIncome;
+
+    // Toggle dark mode
+    themeToggle.addEventListener('click', () => {
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+    });
+
+    // Mock authentication functions
+    window.login = () => {
+      const email = document.getElementById('email').value;
+      if (email) {
+        currentUser = { email: email, uid: 'demo-user-123' };
+        isLoggedIn = true;
+        showApp();
+        updateFinancials();
+      }
+    };
+
+    window.register = () => {
+      const email = document.getElementById('email').value;
+      if (email) {
+        currentUser = { email: email, uid: 'demo-user-123' };
+        isLoggedIn = true;
+        showApp();
+        updateFinancials();
+      }
+    };
+
+    window.googleLogin = () => {
+      currentUser = { email: 'google-user@example.com', uid: 'google-user-123' };
+      isLoggedIn = true;
+      showApp();
+      updateFinancials();
+    };
+
+    // Logout
+    logoutBtn.onclick = () => {
+      isLoggedIn = false;
+      currentUser = null;
+      showLogin();
+    };
+
+    // Set Income
+    window.setIncome = () => {
+      const income = parseFloat(incomeInput.value);
+      if (isNaN(income) || income < 0) {
+        alert("Please enter a valid income amount");
+        return;
+      }
+      totalIncome = income;
+      updateFinancials();
+    };
+
+    // Update currency
+    currencySelect.addEventListener('change', () => {
+      currencySymbol = currencySelect.value;
+      updateFinancials();
+    });
+
+    // Add Expense
+    window.addExpense = () => {
+      const title = document.getElementById('expTitle').value;
+      const amount = parseFloat(document.getElementById('expAmount').value);
+      let category = document.getElementById('expCategory').value;
+      if (category === "Other") {
+        const custom = document.getElementById('expCustomCategory').value.trim();
+        if (!custom) return alert("Enter custom category!");
+        category = custom;
+      }
+      const date = document.getElementById('expDate').value;
+      
+      if (!title || !amount || !date || !category) {
+        return alert("Please fill all fields!");
+      }
+
+      const newExpense = { 
+        id: Date.now().toString(), 
+        title, 
+        amount, 
+        category, 
+        date, 
+        timestamp: Date.now() 
+      };
+      
+      expenses.unshift(newExpense);
+      updateFinancials();
+
+      // Clear form
+      document.getElementById('expTitle').value = '';
+      document.getElementById('expAmount').value = '';
+      document.getElementById('expCategory').value = 'Food';
+      document.getElementById('expCustomCategory').value = '';
+      document.getElementById('expCustomCategory').classList.add('hidden');
+      document.getElementById('expDate').value = '';
+    };
+
+    // Show/hide custom category
+    window.onCategoryChange = () => {
+      const cat = document.getElementById('expCategory').value;
+      const custom = document.getElementById('expCustomCategory');
+      custom.classList.toggle('hidden', cat !== 'Other');
+    };
+
+    // Update all financial calculations
+    function updateFinancials() {
+      let totalExp = 0;
+      expenses.forEach(item => {
+        totalExp += item.amount;
+      });
+
+      totalIncomeElement.textContent = `${currencySymbol}${totalIncome.toFixed(2)}`;
+      totalExpenses.textContent = `${currencySymbol}${totalExp.toFixed(2)}`;
+      balance.textContent = `${currencySymbol}${(totalIncome - totalExp).toFixed(2)}`;
+      
+      renderExpenses(expenses);
+    }
+
+    // Render Expenses
+    function renderExpenses(list) {
+      expTable.innerHTML = '';
+      let totalExp = 0;
+
+      list.forEach(item => {
+        totalExp += item.amount;
+        const tr = document.createElement('tr');
+        const categoryClass = `category-${item.category.toLowerCase().replace(/\s+/g, '-')}`;
+        tr.innerHTML = `
+          <td>${item.title}</td>
+          <td>${currencySymbol}${item.amount.toFixed(2)}</td>
+          <td><span class="category-badge ${categoryClass}">${item.category}</span></td>
+          <td>${item.date}</td>
+          <td>
+            <button class="btn-icon delete-btn" onclick="deleteExpense('${item.id}')">🗑️</button>
+          </td>
+        `;
+        expTable.appendChild(tr);
+      });
+    }
+
+    // Export expenses
+    window.exportExpenses = () => {
+      const csv = [
+        ['Title', 'Amount', 'Category', 'Date'],
+        ...expenses.map(exp => [exp.title, exp.amount, exp.category, exp.date])
+      ].map(row => row.join(',')).join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'expenses.csv');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
+    // Delete Expense
+    window.deleteExpense = (id) => {
+      expenses = expenses.filter(expense => expense.id !== id);
+      updateFinancials();
+    };
+
+    // Show app or login
+    function showApp() {
+      loginSection.classList.add('hidden');
+      appSection.classList.remove('hidden');
+      logoutBtn.style.display = 'block';
+      userName.textContent = currentUser.email?.split('@')[0] || 'User';
+    }
+
+    function showLogin() {
+      loginSection.classList.remove('hidden');
+      appSection.classList.add('hidden');
+      logoutBtn.style.display = 'none';
+    }
+
+    // Initialize with login screen
+    showLogin();
+  </script>
+</body>
+</html>
