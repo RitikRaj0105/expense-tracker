@@ -8,13 +8,5 @@ wdkhijewp wiojsopjpo uihojwa hiuh woi qwheqojewjoi wqeqohewqeoijwqi udhuidhuh uk
      w oiwddoiwdji 
      w woidiod
       iadiodajp
-       aoojad
-        adoid oij
-         ijasdoijoajopd
-          diadjidaj
-           diaiojdaoij
-           ddjoiasj d
-           ddsaidsj
-            ddijid
-            dpoaspojd
+       a
             
